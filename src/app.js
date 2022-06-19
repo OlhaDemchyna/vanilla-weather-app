@@ -1,4 +1,6 @@
 let apiKey = "2833a5c0ffd88b47f1e5f1647b27776f";
+let hasErrorBeenShown = false;
+let isCelsiusShown = true;
 
 function formatDate (timestamp) {
     let date = new Date(timestamp);
@@ -12,8 +14,16 @@ function formatDate (timestamp) {
 function displayTemperature(response) {
     console.log(response.data);
 
+    lastCelsiusTemp = response.data.main.temp;
+
+    let temperature = lastCelsiusTemp;
+
+    if (!isCelsiusShown) {
+        temperature = celsiusToFahrenheit(lastCelsiusTemp);
+    }
+
     document.querySelector("#city").innerHTML = response.data.name;
-    document.querySelector("#temperature").innerHTML = Math.round(response.data.main.temp);
+    document.querySelector("#temperature").innerHTML = Math.round(temperature);
     document.querySelector("#humidity").innerHTML = Math.round(response.data.main.humidity);
     document.querySelector("#wind").innerHTML = Math.round(response.data.wind.speed);
     document.querySelector("#description").innerHTML = response.data.weather[0].description;
@@ -23,15 +33,13 @@ function displayTemperature(response) {
     document.querySelector("#info").classList.remove("d-none");
 }
 
-let hasErrorBeenShown = false;
-
 function handleError() {
     if (hasErrorBeenShown) {
         alert ("┻━┻ ︵ヽ(`Д´)ﾉ︵﻿ ┻━┻");
     } else {
         alert ("Type the city name correctly (╯°□°）╯︵ ┻━┻");
     }
-    
+
     hasErrorBeenShown = true;
 }
 
@@ -44,6 +52,35 @@ function search(event) {
     }
 }
 
+let lastCelsiusTemp = null;
 
+function celsiusTemp(event) {
+    event.preventDefault();
+    
+    document.querySelector("#temperature").innerHTML = Math.round(lastCelsiusTemp);
+
+    document.querySelector("#fahrenheit").classList.remove("active");
+    document.querySelector("#celsius").classList.add("active");
+
+    isCelsiusShown = true;
+}
+
+function fahrenheitTemp(event) {
+    event.preventDefault();
+
+    document.querySelector("#temperature").innerHTML = Math.round(celsiusToFahrenheit(lastCelsiusTemp));
+
+    document.querySelector("#celsius").classList.remove("active");
+    document.querySelector("#fahrenheit").classList.add("active");
+
+    isCelsiusShown = false;
+}
+
+function celsiusToFahrenheit(celsius) {
+    return celsius*9/5+32
+}
 
 document.querySelector("#search-form").addEventListener("submit", search);
+
+document.querySelector("#celsius").addEventListener("click", celsiusTemp);
+document.querySelector("#fahrenheit").addEventListener("click", fahrenheitTemp);

@@ -59,6 +59,15 @@ li {
   top: -34px;
 }
 
+.weather-temperature a.active {
+  cursor: default;
+  color: rgb(33, 33, 33);
+}
+
+.weather-temperature a.active:hover {
+  text-decoration: none;
+}
+
 #description::first-letter {
   text-transform: uppercase;
 }
